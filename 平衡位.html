@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./vue.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" id="enterArray" v-model="inputStr" />
+        <button v-on:click="handleBtnClick">显示平衡位</button>
+        <div v-show="showIndex" :value="index">{{index}}</div>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                inputStr: "",
+                res: [],
+                index: "",
+                showIndex: false,
+                isExist: false,
+            },
+            methods: {
+                handleBtnClick: function() {
+                    var arr = this.inputStr.toString().split(",");
+                    for (var i = 0; i < arr.length; i++) {
+                        this.res.push(parseFloat(arr[i]));
+                    }
+
+                    var array = this.res;
+                    console.log(array);
+                    this.index = index(array);
+                    console.log(this.index); // 1,2,3,0,6
+                    if (this.index != -1) {
+                        this.showIndex = true;
+                        this.res = [];
+                    } else this.showIndex = true;
+                },
+            },
+        });
+
+        function index(array) {
+            var left_sum = 0;
+            var sum = 0;
+            for (var i = 1; i < array.length; i++) {
+                // 除了第一位的所有和
+                sum += array[i];
+            }
+            var right_sum = sum;
+            for (var i = 1; i < array.length - 1; i++) {
+                //遍历第二个元素至倒数第二个元素
+                left_sum += array[i - 1]; //left_sum加上该元素前的一个元素
+                right_sum -= array[i]; //right_sum减去该元素
+                if (left_sum == right_sum) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+    </script>
+</body>
+
+</html>
