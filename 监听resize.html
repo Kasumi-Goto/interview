@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        .container {
+            position: relative;
+            width: 500px;
+            height: 300px;
+            background-color: red;
+        }
+        
+        .size-watch {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            visibility: hidden;
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+    </style>
+
+    <div class="container"></div>
+
+    <script>
+        //在被监听的 div 中添加 iframe 标签，设置其高宽均为 100%, iframe 的 resize 被触发时， div 的大小正在改变
+        var el = document.querySelector(".container");
+        resize(el, (val, oldVal) => {
+            console.log(
+                `size changed! new: ${JSON.stringify(val)}, old: ${JSON.stringify(
+            oldVal
+          )}`
+            );
+        });
+
+        function resize(el, cb) {
+            // 创建iframe标签，设置样式并插入到被监听元素中
+            var iframe = document.createElement("iframe");
+            iframe.setAttribute("class", "size-watch");
+            el.appendChild(iframe);
+
+            // 记录元素当前宽高
+            var oldWidth = el.offsetWidth;
+            var oldHeight = el.offsetHeight;
+
+            // iframe 大小变化时的回调函数
+            function sizeChange() {
+                // 记录元素变化后的宽高
+                var width = el.offsetWidth;
+                var height = el.offsetHeight;
+                // 不一致时触发回调函数 cb，并更新元素当前宽高
+                if (width !== oldWidth || height !== oldHeight) {
+                    cb({
+                        width: width,
+                        height: height,
+                    }, {
+                        width: oldWidth,
+                        height: oldHeight,
+                    });
+                    oldWidth = width;
+                    oldHeight = height;
+                }
+            }
+
+            //获取iframe的window对象
+            iframe.contentWindow.onresize = function() {
+                // 将 sizeChange 函数挂载到 iframe 的resize回调中
+                sizeChange();
+            };
+        }
+    </script>
+</body>
+
+</html>
